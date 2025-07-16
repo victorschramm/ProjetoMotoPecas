@@ -45,10 +45,10 @@ class FormaPagamento(models.TextChoices):
 
 class Servico(models.Model):
     descricao = models.CharField(max_length=150)
-    garantia = models.CharField(max_length=4, choices=Garantia.choices, default=Garantia.G7)
+    garantia = models.CharField(max_length=3, choices=Garantia.choices, default=Garantia.G7)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
 class Pagamento(models.Model):
-    data = models.models.DateTimeField(_(""), auto_now=False, auto_now_add=True)
+    data = models.DateTimeField(auto_now_add=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     forma_pagamento = models.CharField(max_length=4, choices=FormaPagamento.choices, default=FormaPagamento.PIX)
