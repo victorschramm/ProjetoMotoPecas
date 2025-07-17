@@ -1,4 +1,5 @@
 from django.db import models
+from .enum import Garantia, FormaPagamento, Unidades
 from django.contrib.auth.models import AbstractUser
 
 class Fornecedor(models.Model):
@@ -11,7 +12,7 @@ class Produto(models.Model):
     descricao = models.CharField(max_length=200)
     marca = models.CharField(max_length=100)
     quantidade = models.IntegerField()
-    unidade =  models.CharField(max_length=10)
+    unidade = models.CharField(max_length=50 ,choices=Unidades, default=Unidades.UNIDADE)
 
 class Usuario(AbstractUser):
     telefone = models.CharField(max_length=15)
@@ -27,21 +28,6 @@ class Veiculo(models.Model):
    placa = models.CharField(max_length=7)
    marca = models.CharField(max_length=50)
    modelo = models.CharField(max_length=100)
-
-class Garantia(models.TextChoices):
-    G0 = '0d', '0 dias'
-    G7 = '7d', '7 dias'
-    G14 = '14d', '14 dias'
-    G30 = '30d', '30 dias'
-    G60 = '60d', '60 dias'
-    G90 = '90d', '90 dias'
-
-class FormaPagamento(models.TextChoices):
-    PIX = 'PIX', 'Pix'
-    CREDITO = 'CRED', 'Cartão de Crédito'
-    DEBITO = 'DEB', 'Cartão de Débito'
-    DINHEIRO = 'DIN', 'Dinheiro'
-    FIADO = 'FIA', 'Fiado'
 
 class Servico(models.Model):
     descricao = models.CharField(max_length=150)
@@ -78,3 +64,28 @@ class HistoricoPrecoProduto(models.Model):
     precoDeCompra = models.DecimalField(max_digits=10, decimal_places=2)
     precoDeVenda = models.DecimalField(max_digits=10, decimal_places=2)
     produto = models.ForeignKey(Produto, verbose_name=_("HistoricoPrecoProduto"), on_delete=models.RESTRICT)
+
+class Pedido(models.Model):
+    data =  models.DateField(auto_now_add=False)
+    valor =  models.DecimalField(max_digits=10, decimal_places=2)
+    fornecedor = models.ForeignKey(Fornecedor, related_name="pedido", on_delete=models.RESTRICT)
+
+class PedidoProduto(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='pedido_produtos')
+    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedido_produtos')
+    quantidade = models.PositiveIntegerField()
+    preco = models.DecimalField(max_digits=10, decimal_places=2)
+
+class VendaProduto(models.Model):
+    item = models.CharField(max_length=50)
+    data = models.DateTimeField(auto_now_add=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT, verbose_name=_("Cliente"))
+    funcionario = models.ForeignKey(Usuario, on_delete=models.RESTRICT, verbose_name=_("Funcionário"))
+    pagamento = models.ForeignKey(Pagamento, on_delete=models.SET_NULL, null=True, blank=True)
+    valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
+
+class VendaItem(models.Model):
+    venda = models.ForeignKey(VendaProduto, on_delete=models.RESTRICT,verbose_name=_("Venda"))
+    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, verbose_name=_("Produto"))
+    quantidade_vendida = models.PositiveIntegerField()
+    precoVenda = models.DecimalField(max_digits=10, decimal_places=2)
