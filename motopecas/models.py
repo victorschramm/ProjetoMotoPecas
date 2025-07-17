@@ -74,8 +74,8 @@ class Pedido(models.Model):
     fornecedor = models.ForeignKey(Fornecedor, related_name="pedido", on_delete=models.RESTRICT)
 
 class PedidoProduto(models.Model):
-    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='pedidoProdutos')
-    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedidoProdutos')
+    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='produtoPedido')
+    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedidoProduto')
     quantidade = models.PositiveIntegerField()
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
