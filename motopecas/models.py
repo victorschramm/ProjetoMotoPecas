@@ -34,6 +34,7 @@ class Servico(models.Model):
     garantia = models.CharField(max_length=3, choices=Garantia.choices, default=Garantia.G7)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
+# essa classe deve migrar para pasta emum.py
 class StatusPagamento(models.TextChoices):
     REALIZADO = 'REA', 'Realizado'
     PENDENTE = 'PEN', 'Pendente'
@@ -50,41 +51,43 @@ class VendaServico(models.Model):
     servico = models.ForeignKey(Servico, on_delete=models.RESTRICT)
     veiculo = models.ForeignKey(Veiculo, on_delete=models.RESTRICT)
     usuario = models.ForeignKey(Usuario, on_delete=models.RESTRICT)
-    pagamento = models.ForeignKey(Pagamento, related_name="VendaServico", on_delete=models.RESTRICT)
+    pagamento = models.ForeignKey(Pagamento, related_name="vendaServico", on_delete=models.RESTRICT)
 
+# essa classe deve ser apagada, informações passarão para classe intermediaria entre venda - serviço
 class HistoricoPrecoServico(models.Model):
     dataInicio = models.DateField(auto_now_add=True)
     dataFim = models.DateField()
     precoCobrado = models.DecimalField(max_digits=10, decimal_places=2)
-    servico = models.ForeignKey(Servico, related_name="HistoricoPrecoServico", on_delete=models.RESTRICT)
+    servico = models.ForeignKey(Servico, related_name="historicoPreco", on_delete=models.RESTRICT)
 
+# essa classe deve ser apagada, informações passarão para classe intermediaria entre venda - produto
 class HistoricoPrecoProduto(models.Model):
     dataInicio = models.DateField(auto_now_add=True)
     dataFim = models.DateField()
     precoDeCompra = models.DecimalField(max_digits=10, decimal_places=2)
     precoDeVenda = models.DecimalField(max_digits=10, decimal_places=2)
-    produto = models.ForeignKey(Produto, related_name="HistoricoPrecoProduto", on_delete=models.RESTRICT)
+    produto = models.ForeignKey(Produto, related_name="historicoPreco", on_delete=models.RESTRICT)
 
 class Pedido(models.Model):
     data =  models.DateField(auto_now_add=True)
     valor =  models.DecimalField(max_digits=10, decimal_places=2)
-    fornecedor = models.ForeignKey(Fornecedor, related_name="Pedido", on_delete=models.RESTRICT)
+    fornecedor = models.ForeignKey(Fornecedor, related_name="pedido", on_delete=models.RESTRICT)
 
 class PedidoProduto(models.Model):
-    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='pedido_produtos')
-    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedido_produtos')
+    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='produtoPedido')
+    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedidoProduto')
     quantidade = models.PositiveIntegerField()
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
 class VendaProduto(models.Model):
     data = models.DateTimeField(auto_now_add=True)
-    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT,related_name="Cliente")
-    funcionario = models.ForeignKey(Usuario, on_delete=models.RESTRICT, related_name="Funcionario")
-    pagamento = models.ForeignKey(Pagamento, on_delete=models.RESTRICT, null=True, blank=True, related_name="Pagamento")
+    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT,related_name="cliente")
+    funcionario = models.ForeignKey(Usuario, on_delete=models.RESTRICT, related_name="funcionario")
+    pagamento = models.ForeignKey(Pagamento, on_delete=models.RESTRICT, null=True, blank=True, related_name="pagamento")
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
 
 class VendaItem(models.Model):
-    venda = models.ForeignKey(VendaProduto, on_delete=models.RESTRICT,related_name="Venda")
-    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name="Produto")
+    venda = models.ForeignKey(VendaProduto, on_delete=models.RESTRICT,related_name="venda")
+    produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name="produto")
     quantidade_vendida = models.PositiveIntegerField()
     precoVenda = models.DecimalField(max_digits=10, decimal_places=2)
