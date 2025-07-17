@@ -56,25 +56,25 @@ class StatusPagamento(models.TextChoices):
 class Pagamento(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    formaPagamento = models.CharField(max_length=4, choices=FormaPagamento.choices, default=FormaPagamento.PIX)
+    formaPagamento = models.CharField(max_length=4, choices=FormaPagamento.choices, default=FormaPagamento.DINHEIRO)
     statusPagamento = models.CharField(max_length=4, choices=StatusPagamento.choices, default=StatusPagamento.REALIZADO)
 
 class VendaServico(models.Model):
-    data = models.DateField(auto_now_add=False)
+    data = models.DateField(auto_now_add=True)
     servico = models.ForeignKey(Servico, on_delete=models.RESTRICT)
     veiculo = models.ForeignKey(Veiculo, on_delete=models.RESTRICT)
     usuario = models.ForeignKey(Usuario, on_delete=models.RESTRICT)
     pagamento = models.ForeignKey(Pagamento, verbose_name=_("VendaServico"), on_delete=models.RESTRICT)
 
 class HistoricoPrecoServico(models.Model):
-    dataInicio = models.DateField(auto_now_add=False)
+    dataInicio = models.DateField(auto_now_add=True)
     dataFim = models.DateField()
     precoCobrado = models.DecimalField(max_digits=10, decimal_places=2)
-    servico = models.ForeignKey(Servico, verbose_name=_("HistoricoPrecoServico"), on_delete=models.CASCADE)
+    servico = models.ForeignKey(Servico, verbose_name=_("HistoricoPrecoServico"), on_delete=models.RESTRICT)
 
 class HistoricoPrecoProduto(models.Model):
-    dataInicio = models.DateField(auto_now_add=False)
+    dataInicio = models.DateField(auto_now_add=True)
     dataFim = models.DateField()
     precoDeCompra = models.DecimalField(max_digits=10, decimal_places=2)
     precoDeVenda = models.DecimalField(max_digits=10, decimal_places=2)
-    produto = models.ForeignKey(Produto, verbose_name=_("HistoricoPrecoProduto"), on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, verbose_name=_("HistoricoPrecoProduto"), on_delete=models.RESTRICT)
