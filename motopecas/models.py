@@ -8,11 +8,10 @@ class Fornecedor(models.Model):
     telefone = models.CharField(max_length=12)
     email = models.EmailField(max_length=100)
 
-
 class Produto(models.Model):
     descricao = models.CharField(max_length=200)
     marca = models.CharField(max_length=100)
-    quantidade = models.IntegerField()
+    quantidade = models.PositiveIntegerField()
     unidade = models.CharField(max_length=50 ,choices=Unidades.choices, default=Unidades.UNIDADE)
 
 class Usuario(AbstractUser):
@@ -25,7 +24,7 @@ class Cliente(models.Model):
    telefone = models.CharField(max_length=15)          
        
 class Veiculo(models.Model):
-   proprietario = models.ForeignKey(Usuario, on_delete=models.RESTRICT)
+   proprietario = models.ForeignKey(Cliente, on_delete=models.RESTRICT)
    placa = models.CharField(max_length=7)
    marca = models.CharField(max_length=50)
    modelo = models.CharField(max_length=100)
@@ -69,7 +68,7 @@ class HistoricoPrecoProduto(models.Model):
 class Pedido(models.Model):
     data =  models.DateField(auto_now_add=True)
     valor =  models.DecimalField(max_digits=10, decimal_places=2)
-    fornecedor = models.ForeignKey(Fornecedor, related_name="pedido", on_delete=models.RESTRICT)
+    fornecedor = models.ForeignKey(Fornecedor, related_name="Pedido", on_delete=models.RESTRICT)
 
 class PedidoProduto(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='pedido_produtos')
@@ -78,13 +77,11 @@ class PedidoProduto(models.Model):
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
 class VendaProduto(models.Model):
-    item = models.CharField(max_length=50)
     data = models.DateTimeField(auto_now_add=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT,related_name="Cliente")
-    funcionario = models.ForeignKey(Usuario, on_delete=models.RESTRICT, related_name="Funcionário")
-    pagamento = models.ForeignKey(Pagamento, on_delete=models.SET_NULL, null=True, blank=True)
+    funcionario = models.ForeignKey(Usuario, on_delete=models.RESTRICT, related_name="Funcionario")
+    pagamento = models.ForeignKey(Pagamento, on_delete=models.RESTRICT, null=True, blank=True, related_name="Pagamento")
     valorTotal = models.DecimalField(max_digits=10, decimal_places=2)
-
 
 class VendaItem(models.Model):
     venda = models.ForeignKey(VendaProduto, on_delete=models.RESTRICT,related_name="Venda")
