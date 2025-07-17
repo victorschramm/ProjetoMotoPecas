@@ -2,6 +2,8 @@ from django.db import models
 from .enum import Garantia, FormaPagamento, Unidades
 from django.contrib.auth.models import AbstractUser
 
+
+
 # Modelo que representa os dados do fornecedor
 class Fornecedor(models.Model):
     cnpj = models.CharField(max_length=14)  # CNPJ do fornecedor
@@ -40,11 +42,7 @@ class Servico(models.Model):
     garantia = models.CharField(max_length=3, choices=Garantia.choices, default=Garantia.G7)  # Garantia oferecida
     preco = models.DecimalField(max_digits=10, decimal_places=2)  # Preço do serviço
 
-# Status possíveis para o pagamento
-class StatusPagamento(models.TextChoices):
-    REALIZADO = 'REA', 'Realizado'
-    PENDENTE = 'PEN', 'Pendente'
-    PARCIALMENTE_PENDENTE = 'PPEN', 'Parcialmente Pendente'
+
 
 # Registro de pagamentos
 class Pagamento(models.Model):
@@ -61,20 +59,6 @@ class VendaServico(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.RESTRICT)  # Funcionário que realizou o serviço
     pagamento = models.ForeignKey(Pagamento, related_name="VendaServico", on_delete=models.RESTRICT)  # Pagamento associado
 
-# Histórico de preços praticados para serviços
-class HistoricoPrecoServico(models.Model):
-    dataInicio = models.DateField(auto_now_add=True)  # Início do período
-    dataFim = models.DateField()  # Fim do período
-    precoCobrado = models.DecimalField(max_digits=10, decimal_places=2)  # Preço cobrado no período
-    servico = models.ForeignKey(Servico, related_name="HistoricoPrecoServico", on_delete=models.RESTRICT)  # Serviço relacionado
-
-# Histórico de preços praticados para produtos
-class HistoricoPrecoProduto(models.Model):
-    dataInicio = models.DateField(auto_now_add=True)  # Início do período
-    dataFim = models.DateField()  # Fim do período
-    precoDeCompra = models.DecimalField(max_digits=10, decimal_places=2)  # Preço de compra no período
-    precoDeVenda = models.DecimalField(max_digits=10, decimal_places=2)  # Preço de venda no período
-    produto = models.ForeignKey(Produto, related_name="HistoricoPrecoProduto", on_delete=models.RESTRICT)  # Produto relacionado
 
 # Registro de compras feitas ao fornecedor
 class Pedido(models.Model):
@@ -87,7 +71,7 @@ class PedidoProduto(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.RESTRICT, related_name='pedido_produtos')  # Produto comprado
     pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT, related_name='pedido_produtos')  # Pedido referente
     quantidade = models.PositiveIntegerField()  # Quantidade adquirida
-    preco = models.DecimalField(max_digits=10, decimal_places=2)  # Preço unitário no pedido
+    valor = models.DecimalField(max_digits=10, decimal_places=2)  # Preço unitário no pedido
 
 # Registro de venda de produtos
 class VendaProduto(models.Model):
