@@ -48,7 +48,33 @@ class Servico(models.Model):
     garantia = models.CharField(max_length=3, choices=Garantia.choices, default=Garantia.G7)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
+class StatusPagamento(models.TextChoices):
+    REALIZADO = 'REA', 'Realizado'
+    PENDENTE = 'PEN', 'Pendente'
+    PARCIALMENTE_PENDENTE = 'PPEN', 'Parcialmente Pendente'
+
 class Pagamento(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    forma_pagamento = models.CharField(max_length=4, choices=FormaPagamento.choices, default=FormaPagamento.PIX)
+    formaPagamento = models.CharField(max_length=4, choices=FormaPagamento.choices, default=FormaPagamento.PIX)
+    statusPagamento = models.CharField(max_length=4, choices=StatusPagamento.choices, default=StatusPagamento.REALIZADO)
+
+class VendaServico(models.Model):
+    data = models.DateField(auto_now_add=False)
+    servico = models.ForeignKey(Servico, on_delete=models.RESTRICT)
+    veiculo = models.ForeignKey(Veiculo, on_delete=models.RESTRICT)
+    usuario = models.ForeignKey(Usuario, on_delete=models.RESTRICT)
+    pagamento = models.ForeignKey(Pagamento, verbose_name=_("VendaServico"), on_delete=models.RESTRICT)
+
+class HistoricoPrecoServico(models.Model):
+    dataInicio = models.DateField(auto_now_add=False)
+    dataFim = models.DateField()
+    precoCobrado = models.DecimalField(max_digits=10, decimal_places=2)
+    servico = models.ForeignKey(Servico, verbose_name=_("HistoricoPrecoServico"), on_delete=models.CASCADE)
+
+class HistoricoPrecoProduto(models.Model):
+    dataInicio = models.DateField(auto_now_add=False)
+    dataFim = models.DateField()
+    precoDeCompra = models.DecimalField(max_digits=10, decimal_places=2)
+    precoDeVenda = models.DecimalField(max_digits=10, decimal_places=2)
+    produto = models.ForeignKey(Produto, verbose_name=_("HistoricoPrecoProduto"), on_delete=models.CASCADE)
