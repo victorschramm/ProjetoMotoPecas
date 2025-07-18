@@ -1,0 +1,13 @@
+SECRET_KEY='django-insecure-)&(i+(v@hv7p!is++89l%l-fg!2j#5gyw=%i-_ywhq0o-rz8dm'
+DEBUG=1
+ALLOWED_HOSTS='127.0.0.1,localhost'
+
+DB_PORT=5432
+DB_SERVICE=database
+
+POSTGRES_DB=motopecas_db
+POSTGRES_USER=motopeca_user
+POSTGRES_PASS="moto123#@!"
+POSTGRES_HOST_AUTH_METHOD=trust
+
+DATABASE_URI="postgresql://${POSTGRES_USER}:${POSTGRES_PASS}@${DB_SERVICE}:${DB_PORT}/${POSTGRES_DB}"
