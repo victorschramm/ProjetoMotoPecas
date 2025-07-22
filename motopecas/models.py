@@ -87,7 +87,7 @@ class VendaServico(models.Model):
         Usuario, on_delete=models.RESTRICT
     )  # Funcionário que realizou o serviço
     pagamento = models.ForeignKey(
-        Pagamento, related_name="VendaServico", on_delete=models.RESTRICT
+        Pagamento, on_delete=models.RESTRICT
     )  # Pagamento associado
 
 
@@ -98,17 +98,17 @@ class Pedido(models.Model):
         max_digits=10, decimal_places=2
     )  # Valor total da compra
     fornecedor = models.ForeignKey(
-        Fornecedor, related_name="pedido", on_delete=models.RESTRICT
+        Fornecedor, on_delete=models.RESTRICT
     )  # Fornecedor responsável
 
 
 # Produtos incluídos em um pedido
 class PedidoProduto(models.Model):
     produto = models.ForeignKey(
-        Produto, on_delete=models.RESTRICT, related_name="produtoPedido"
+        Produto, on_delete=models.RESTRICT
     )  # Produto comprado
     pedido = models.ForeignKey(
-        Pedido, on_delete=models.RESTRICT, related_name="pedidoProduto"
+        Pedido, on_delete=models.RESTRICT
     )  # Pedido referente
     quantidade = models.PositiveIntegerField()  # Quantidade adquirida
     valor = models.DecimalField(
@@ -120,17 +120,16 @@ class PedidoProduto(models.Model):
 class VendaProduto(models.Model):
     data = models.DateTimeField(auto_now_add=True)  # Data da venda
     cliente = models.ForeignKey(
-        Cliente, on_delete=models.RESTRICT, related_name="cliente"
+        Cliente, on_delete=models.RESTRICT
     )  # Cliente comprador
     funcionario = models.ForeignKey(
-        Usuario, on_delete=models.RESTRICT, related_name="funcionario"
+        Usuario, on_delete=models.RESTRICT
     )  # Funcionário responsável
     pagamento = models.ForeignKey(
         Pagamento,
         on_delete=models.RESTRICT,
         null=True,
-        blank=True,
-        related_name="pagamento",
+        blank=True
     )  # Pagamento vinculado
     valorTotal = models.DecimalField(
         max_digits=10, decimal_places=2
@@ -140,10 +139,10 @@ class VendaProduto(models.Model):
 # Produtos vendidos em cada venda
 class VendaItem(models.Model):
     venda = models.ForeignKey(
-        VendaProduto, on_delete=models.RESTRICT, related_name="venda"
+        VendaProduto, on_delete=models.RESTRICT
     )  # Venda à qual pertence
     produto = models.ForeignKey(
-        Produto, on_delete=models.RESTRICT, related_name="produto"
+        Produto, on_delete=models.RESTRICT
     )  # Produto vendido
     quantidade = models.PositiveIntegerField()  # Quantidade vendida
     precoUnitario = models.DecimalField(
